@@ -1,198 +1,141 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Agendamento de Laboratório</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 800px;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            border-radius: 10px 10px 0 0 !important;
-        }
-        #loading {
-            display: none;
-            margin-right: 8px;
-        }
-        #resultado {
-            min-height: 60px;
-        }
-        .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamento de Laboratório</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    #loading { display: none; }
+    .card { max-width: 600px; margin: 2rem auto; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card my-4">
-            <div class="card-header bg-primary text-white">
-                <h3 class="text-center mb-0">Agendamento de Recursos do Laboratório</h3>
+  <div class="container">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Agendar Recurso</h4>
+      </div>
+      <div class="card-body">
+        <form id="formAgendamento">
+          <div class="mb-3">
+            <label class="form-label">Recurso</label>
+            <select id="recurso" class="form-select" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option value="Computador i7">Computador i7</option>
+              <option value="Notebook Dev">Notebook Dev</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Seu Nome</label>
+            <input type="text" id="usuario" class="form-control" required>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Seu E-mail</label>
+            <input type="email" id="email" class="form-control" required>
+          </div>
+          
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Data</label>
+              <input type="date" id="data" class="form-control" required>
             </div>
-            <div class="card-body">
-                <form id="formAgendamento">
-                    <div class="mb-3">
-                        <label for="recurso" class="form-label">Recurso Computacional</label>
-                        <select class="form-select" id="recurso" required>
-                            <option value="" selected disabled>Selecione um recurso...</option>
-                            <option value="Computador i7 - Estação 01">Computador i7 - Estação 01</option>
-                            <option value="Computador i9 - Estação 02">Computador i9 - Estação 02</option>
-                            <option value="Notebook de Desenvolvimento">Notebook de Desenvolvimento</option>
-                            <option value="Estação de Edição de Vídeo">Estação de Edição de Vídeo</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="usuario" class="form-label">Seu Nome Completo</label>
-                        <input type="text" class="form-control" id="usuario" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Seu E-mail Institucional</label>
-                        <input type="email" class="form-control" id="email" required>
-                    </div>
-                    
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="data" class="form-label">Data do Agendamento</label>
-                            <input type="date" class="form-control" id="data" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="horaInicio" class="form-label">Hora Início</label>
-                            <input type="time" class="form-control" id="horaInicio" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="horaFim" class="form-label">Hora Término</label>
-                            <input type="time" class="form-control" id="horaFim" required>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <span id="loading" class="spinner-border spinner-border-sm"></span>
-                            Confirmar Agendamento
-                        </button>
-                    </div>
-                </form>
-                
-                <div id="resultado" class="mt-4"></div>
+            <div class="col-md-3">
+              <label class="form-label">Hora Início</label>
+              <input type="time" id="horaInicio" class="form-control" value="08:00" required>
             </div>
-        </div>
-    </div>
-
-    <script>
-        // URL do seu Google Apps Script (SUBSTITUA pela sua URL real)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSg8x2m-6yi5oosd04riI53TeeR9qR8W8-8MneSwbh4f8untkRI38-1oMCIg2ICQvt7w/exec';
+            <div class="col-md-3">
+              <label class="form-label">Hora Fim</label>
+              <input type="time" id="horaFim" class="form-control" value="09:00" required>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary w-100">
+            <span id="loading" class="spinner-border spinner-border-sm"></span>
+            Confirmar Agendamento
+          </button>
+        </form>
         
-        document.getElementById('formAgendamento').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const btn = e.target.querySelector('button[type="submit"]');
-            const loading = document.getElementById('loading');
-            const resultadoDiv = document.getElementById('resultado');
-            
-            // Mostrar loading e desativar botão
-            btn.disabled = true;
-            loading.style.display = 'inline-block';
-            resultadoDiv.innerHTML = '';
-            
-            try {
-                // 1. Preparar dados no formato correto
-                const dados = {
-                    recurso: document.getElementById('recurso').value,
-                    usuario: document.getElementById('usuario').value,
-                    email: document.getElementById('email').value,
-                    inicio: `${document.getElementById('data').value}T${document.getElementById('horaInicio').value}:00-03:00`,
-                    fim: `${document.getElementById('data').value}T${document.getElementById('horaFim').value}:00-03:00`
-                };
-                
-                // 2. Primeiro faz a requisição OPTIONS (pré-voo CORS)
-                await fetch(`${SCRIPT_URL}?options`, {
-                    method: 'OPTIONS',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Origin': window.location.origin
-                    }
-                });
-                
-                // 3. Depois faz a requisição POST com os dados
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dados),
-                    mode: 'cors'
-                });
-                
-                const resultado = await response.json();
-                
-                // 4. Verificar se houve erro na resposta
-                if (!resultado.success) {
-                    throw new Error(resultado.error || "Ocorreu um erro desconhecido");
-                }
-                
-                // 5. Exibir mensagem de sucesso
-                resultadoDiv.innerHTML = `
-                    <div class="alert alert-success">
-                        <h4 class="alert-heading">✓ Agendamento Confirmado!</h4>
-                        <p><strong>Recurso:</strong> ${resultado.recurso || dados.recurso}</p>
-                        <p><strong>Horário:</strong> ${new Date(resultado.start).toLocaleString('pt-BR')} - ${new Date(resultado.end).toLocaleString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</p>
-                        <hr>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-0">Verifique seu e-mail para confirmação.</p>
-                            <a href="${resultado.link}" target="_blank" class="btn btn-sm btn-success">
-                                Abrir no Google Agenda
-                            </a>
-                        </div>
-                    </div>
-                `;
-                
-                // 6. Limpar formulário
-                this.reset();
-                
-            } catch (error) {
-                // 7. Exibir mensagem de erro
-                resultadoDiv.innerHTML = `
-                    <div class="alert alert-danger">
-                        <h4 class="alert-heading">✗ Erro no Agendamento</h4>
-                        <p>${error.message}</p>
-                        ${error.message.includes('horário') ? '<p class="mb-0">Por favor, escolha outro horário.</p>' : ''}
-                    </div>
-                `;
-                
-                console.error('Erro no agendamento:', error);
-            } finally {
-                // 8. Restaurar estado do botão
-                btn.disabled = false;
-                loading.style.display = 'none';
-            }
-        });
+        <div id="resultado" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
 
-        // Configurações iniciais do formulário
-        document.addEventListener('DOMContentLoaded', function() {
-            // Definir data mínima como hoje
-            const dataInput = document.getElementById('data');
-            const hoje = new Date();
-            const dd = String(hoje.getDate()).padStart(2, '0');
-            const mm = String(hoje.getMonth() + 1).padStart(2, '0');
-            const yyyy = hoje.getFullYear();
-            dataInput.min = `${yyyy}-${mm}-${dd}`;
-            
-            // Definir horário comercial padrão (8h às 18h)
-            document.getElementById('horaInicio').value = '08:00';
-            document.getElementById('horaFim').value = '09:00';
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSg8x2m-6yi5oosd04riI53TeeR9qR8W8-8MneSwbh4f8untkRI38-1oMCIg2ICQvt7w/exec'; // Substitua pela sua URL
+    
+    document.getElementById('formAgendamento').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Configurar UI
+      const btn = e.target.querySelector('button');
+      const loading = document.getElementById('loading');
+      const resultadoDiv = document.getElementById('resultado');
+      
+      btn.disabled = true;
+      loading.style.display = 'inline-block';
+      resultadoDiv.innerHTML = '';
+      
+      try {
+        // 1. Preparar dados
+        const dados = {
+          recurso: document.getElementById('recurso').value,
+          usuario: document.getElementById('usuario').value,
+          email: document.getElementById('email').value,
+          inicio: `${document.getElementById('data').value}T${document.getElementById('horaInicio').value}:00-03:00`,
+          fim: `${document.getElementById('data').value}T${document.getElementById('horaFim').value}:00-03:00`
+        };
+        
+        // 2. Fazer pré-voo CORS
+        await fetch(`${SCRIPT_URL}?options`, { method: 'GET' });
+        
+        // 3. Enviar dados
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados)
         });
-    </script>
+        
+        const resultado = await response.json();
+        
+        if (!resultado.success) {
+          throw new Error(resultado.error);
+        }
+        
+        // 4. Mostrar sucesso
+        resultadoDiv.innerHTML = `
+          <div class="alert alert-success">
+            <h5>✓ Agendado!</h5>
+            <p>Recurso: <strong>${resultado.recurso || dados.recurso}</strong></p>
+            <p>Data: <strong>${new Date(resultado.start).toLocaleString('pt-BR')}</strong></p>
+            <a href="${resultado.link}" target="_blank" class="btn btn-sm btn-success mt-2">
+              Ver no Google Agenda
+            </a>
+          </div>
+        `;
+        
+        // 5. Limpar formulário
+        e.target.reset();
+        
+      } catch (error) {
+        // 6. Mostrar erro
+        resultadoDiv.innerHTML = `
+          <div class="alert alert-danger">
+            <h5>✗ Erro</h5>
+            <p>${error.message}</p>
+          </div>
+        `;
+        console.error('Erro:', error);
+      } finally {
+        btn.disabled = false;
+        loading.style.display = 'none';
+      }
+    });
+    
+    // Configurar data mínima = hoje
+    document.getElementById('data').min = new Date().toISOString().split('T')[0];
+  </script>
 </body>
 </html>
